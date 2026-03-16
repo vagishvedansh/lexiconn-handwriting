@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LexiConn — Handwriting Converter</title>
+  <meta name="description" content="Upload your notebook page and type realistic handwriting on it. Perfect for assignments." />
+
+  <!-- Google Fonts: UI + Handwriting -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Caveat&family=Cedarville+Cursive&family=Handlee&family=Homemade+Apple&family=Indie+Flower&family=Kalam:wght@300;400&family=Kristi&family=Liu+Jian+Mao+Cao&family=Nothing+You+Could+Do&display=swap" rel="stylesheet" />
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ========== HEADER ========== -->
+  <header class="app-header">
+    <div class="header-left">
+      <div class="logo-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
+        </svg>
+      </div>
+      <h1 class="app-title">LexiConn</h1>
+      <span class="app-badge">Handwriting</span>
+    </div>
+    <div class="header-right">
+      <button id="dark-mode-toggle" class="icon-btn" title="Toggle Dark/Light Mode">
+        <svg class="icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg class="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ========== MAIN LAYOUT ========== -->
+  <main class="app-main">
+
+    <!-- ---- UPLOAD SCREEN ---- -->
+    <section id="upload-screen" class="upload-screen">
+      <div class="upload-container">
+        <div class="upload-zone" id="upload-zone">
+          <div class="upload-icon">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+              <circle cx="8.5" cy="8.5" r="1.5"/>
+              <polyline points="21 15 16 10 5 21"/>
+            </svg>
+          </div>
+          <h2 class="upload-title">Upload Your Page</h2>
+          <p class="upload-desc">Drag & drop your notebook page, or click to browse.<br>Any photo — lined, blank, graph paper, any lighting.</p>
+          <label class="upload-btn" for="page-file-input">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            Choose Image
+          </label>
+          <input type="file" id="page-file-input" accept="image/*" hidden />
+        </div>
+      </div>
+    </section>
+
+    <!-- ---- EDITOR SCREEN ---- -->
+    <section id="editor-screen" class="editor-screen hidden">
+      <div class="editor-layout">
+
+        <!-- CANVAS/PREVIEW AREA -->
+        <div class="editor-canvas-wrap">
+          <div class="canvas-toolbar">
+            <button id="btn-change-page" class="toolbar-btn" title="Change Page">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              Change Page
+            </button>
+            <div class="toolbar-spacer"></div>
+            <button id="btn-download-png" class="toolbar-btn accent" title="Download as PNG">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Download PNG
+            </button>
+            <button id="btn-download-pdf" class="toolbar-btn" title="Download as PDF">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Download PDF
+            </button>
+          </div>
+
+          <!-- The actual page preview -->
+          <div class="page-preview-container" id="page-preview-container">
+            <div class="page-preview" id="page-preview">
+              <img id="page-bg-img" class="page-bg-img" src="" alt="Uploaded page" />
+              <!-- Header fields overlay -->
+              <div class="header-fields" id="header-fields">
+                <div class="header-field" id="header-field-1" contenteditable="true" data-placeholder="Name:"></div>
+                <div class="header-field" id="header-field-2" contenteditable="true" data-placeholder="Roll No:"></div>
+                <div class="header-field" id="header-field-3" contenteditable="true" data-placeholder="Date:"></div>
+                <div class="header-field" id="header-field-4" contenteditable="true" data-placeholder="Subject:"></div>
+              </div>
+              <!-- Main text overlay -->
+              <div class="text-overlay" id="text-overlay" contenteditable="true" data-placeholder="Start typing your text here..."></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CONTROL PANEL -->
+        <aside class="control-panel" id="control-panel">
+          <div class="panel-header">
+            <h3>Customizations</h3>
+            <button id="btn-toggle-panel" class="icon-btn small" title="Collapse Panel">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+          </div>
+
+          <!-- FONT OPTIONS -->
+          <fieldset class="panel-section">
+            <legend>Font</legend>
+            <div class="control-group">
+              <label for="font-select">Handwriting Font</label>
+              <select id="font-select">
+                <optgroup label="— Downloaded Fonts (Realistic) —">
+                  <option value="PatrickHand" selected>Patrick Hand ★</option>
+                  <option value="Gaegu">Gaegu</option>
+                  <option value="JustAnotherHand">Just Another Hand</option>
+                  <option value="SedgwickAve">Sedgwick Ave</option>
+                  <option value="DawningOfANewDay">Dawning of a New Day</option>
+                  <option value="ReenieBeanie">Reenie Beanie</option>
+                  <option value="ShadowsIntoLight">Shadows Into Light</option>
+                  <option value="CaveatLocal">Caveat (Local)</option>
+                </optgroup>
+                <optgroup label="— From Repos —">
+                  <option value="BrownBag">Brown Bag</option>
+                  <option value="ReallyFree">Really Free</option>
+                  <option value="KhandMedium">Khand Medium</option>
+                  <option value="HindiType">Hindi Type</option>
+                </optgroup>
+                <optgroup label="— Google Fonts (CDN) —">
+                  <option value="'Homemade Apple', cursive">Homemade Apple</option>
+                  <option value="'Indie Flower', cursive">Indie Flower</option>
+                  <option value="'Handlee', cursive">Handlee</option>
+                  <option value="'Cedarville Cursive', cursive">Cedarville Cursive</option>
+                  <option value="'Kristi', cursive">Kristi</option>
+                  <option value="'Nothing You Could Do', cursive">Nothing You Could Do</option>
+                  <option value="'Kalam', cursive">Kalam</option>
+                  <option value="'Liu Jian Mao Cao', cursive">Liu Jian Mao Cao</option>
+                </optgroup>
+              </select>
+            </div>
+            <div class="control-group">
+              <label for="font-file-upload">Upload Custom Font (.ttf/.otf)</label>
+              <input type="file" id="font-file-upload" accept=".ttf,.otf" />
+            </div>
+            <div class="control-group" style="margin-top:8px;">
+              <button id="btn-open-font-gen" class="toolbar-btn" style="width:100%;justify-content:center;padding:10px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+                Create Font from Your Handwriting
+              </button>
+            </div>
+          </fieldset>
+
+          <!-- TEXT OPTIONS -->
+          <fieldset class="panel-section">
+            <legend>Text</legend>
+            <div class="control-row">
+              <div class="control-group">
+                <label for="font-size">Size <span class="val" id="font-size-val">18px</span></label>
+                <input type="range" id="font-size" min="8" max="36" value="18" step="1" />
+              </div>
+              <div class="control-group">
+                <label for="ink-color">Ink Color</label>
+                <div class="color-row">
+                  <input type="color" id="ink-color" value="#000f55" />
+                  <button class="color-preset" data-color="#000f55" title="Blue" style="background:#000f55;"></button>
+                  <button class="color-preset" data-color="#111111" title="Black" style="background:#111111;"></button>
+                  <button class="color-preset" data-color="#1a1a8a" title="Dark Blue" style="background:#1a1a8a;"></button>
+                  <button class="color-preset" data-color="#ba3807" title="Red" style="background:#ba3807;"></button>
+                </div>
+              </div>
+            </div>
+            <div class="control-row">
+              <div class="control-group">
+                <label for="line-height">Line Height <span class="val" id="line-height-val">2.0</span></label>
+                <input type="range" id="line-height" min="1" max="4" value="2.0" step="0.1" />
+              </div>
+              <div class="control-group">
+                <label for="letter-spacing">Letter Spacing <span class="val" id="letter-spacing-val">0px</span></label>
+                <input type="range" id="letter-spacing" min="-3" max="10" value="0" step="0.5" />
+              </div>
+            </div>
+            <div class="control-row">
+              <div class="control-group">
+                <label for="word-spacing">Word Spacing <span class="val" id="word-spacing-val">0px</span></label>
+                <input type="range" id="word-spacing" min="-5" max="30" value="0" step="1" />
+              </div>
+            </div>
+          </fieldset>
+
+          <!-- POSITION OPTIONS -->
+          <fieldset class="panel-section">
+            <legend>Position</legend>
+            <div class="control-row">
+              <div class="control-group">
+                <label for="margin-top">Top Margin <span class="val" id="margin-top-val">60px</span></label>
+                <input type="range" id="margin-top" min="0" max="300" value="60" step="5" />
+              </div>
+              <div class="control-group">
+                <label for="margin-left">Left Margin <span class="val" id="margin-left-val">60px</span></label>
+                <input type="range" id="margin-left" min="0" max="200" value="60" step="5" />
+              </div>
+            </div>
+            <div class="control-row">
+              <div class="control-group">
+                <label for="margin-right">Right Margin <span class="val" id="margin-right-val">30px</span></label>
+                <input type="range" id="margin-right" min="0" max="200" value="30" step="5" />
+              </div>
+            </div>
+          </fieldset>
+
+          <!-- HEADER FIELDS OPTIONS -->
+          <fieldset class="panel-section">
+            <legend>Header Fields</legend>
+            <div class="control-group">
+              <label class="toggle-label">
+                <input type="checkbox" id="toggle-header" checked />
+                <span>Show Header Fields</span>
+              </label>
+            </div>
+            <div class="control-group">
+              <label for="header-top">Header Top <span class="val" id="header-top-val">10px</span></label>
+              <input type="range" id="header-top" min="0" max="200" value="10" step="2" />
+            </div>
+            <div class="control-group">
+              <label for="header-font-size">Header Font Size <span class="val" id="header-font-size-val">16px</span></label>
+              <input type="range" id="header-font-size" min="10" max="30" value="16" step="1" />
+            </div>
+          </fieldset>
+
+          <!-- REALISM OPTIONS -->
+          <fieldset class="panel-section">
+            <legend>Realism</legend>
+            <div class="control-group">
+              <label class="toggle-label">
+                <input type="checkbox" id="toggle-wobble" checked />
+                <span>Letter Wobble</span>
+              </label>
+            </div>
+            <div class="control-group">
+              <label for="wobble-amount">Wobble Amount <span class="val" id="wobble-amount-val">0.8°</span></label>
+              <input type="range" id="wobble-amount" min="0" max="3" value="0.8" step="0.1" />
+            </div>
+            <div class="control-group">
+              <label class="toggle-label">
+                <input type="checkbox" id="toggle-baseline-shift" checked />
+                <span>Baseline Shift</span>
+              </label>
+            </div>
+            <div class="control-group">
+              <label for="baseline-amount">Baseline Amount <span class="val" id="baseline-amount-val">1.5px</span></label>
+              <input type="range" id="baseline-amount" min="0" max="5" value="1.5" step="0.1" />
+            </div>
+            <div class="control-group">
+              <label class="toggle-label">
+                <input type="checkbox" id="toggle-size-var" checked />
+                <span>Size Variation</span>
+              </label>
+            </div>
+            <div class="control-group">
+              <label class="toggle-label">
+                <input type="checkbox" id="toggle-ink-bleed" checked />
+                <span>Ink Bleed (pen spread)</span>
+              </label>
+            </div>
+            <div class="control-group">
+              <label class="toggle-label">
+                <input type="checkbox" id="toggle-slant-var" />
+                <span>Slant Variation</span>
+              </label>
+            </div>
+            <div class="control-group">
+              <label class="toggle-label">
+                <input type="checkbox" id="toggle-opacity-var" />
+                <span>Ink Pressure Variation</span>
+              </label>
+            </div>
+          </fieldset>
+
+          <!-- EXPORT OPTIONS -->
+          <fieldset class="panel-section">
+            <legend>Export</legend>
+            <div class="control-group">
+              <label for="export-quality">Quality</label>
+              <select id="export-quality">
+                <option value="1">Normal (1x)</option>
+                <option value="2" selected>High (2x)</option>
+                <option value="3">Ultra (3x)</option>
+              </select>
+            </div>
+          </fieldset>
+
+        </aside>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========== FONT GENERATOR MODAL ========== -->
+  <div id="font-gen-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Create Font from Your Handwriting</h2>
+        <button id="btn-close-font-gen" class="icon-btn small">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="font-gen-steps">
+          <div class="step">
+            <span class="step-num">1</span>
+            <div>
+              <h4>Print the Template</h4>
+              <p>Click the button below to generate and print a character grid. Write each letter clearly in its box with a dark pen.</p>
+              <button id="btn-print-template" class="toolbar-btn accent" style="margin-top:8px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                Print Template
+              </button>
+            </div>
+          </div>
+          <div class="step">
+            <span class="step-num">2</span>
+            <div>
+              <h4>Upload Your Filled Template</h4>
+              <p>Photograph or scan the filled template and upload it here.</p>
+              <input type="file" id="scan-upload" accept="image/*" style="margin-top:8px;" />
+            </div>
+          </div>
+          <div class="step">
+            <span class="step-num">3</span>
+            <div>
+              <h4>Font Generation</h4>
+              <p id="font-gen-status">Characters will be extracted and compiled into a .ttf font file.</p>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:16px;">
+          <canvas id="template-canvas" style="max-width:100%;border:1px solid var(--border-subtle);border-radius:8px;"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== LIBRARIES ========== -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/opentype.js@1.3.4/dist/opentype.min.js"></script>
+
+  <!-- ========== APP JS ========== -->
+  <script src="js/app.js"></script>
+</body>
+</html>
